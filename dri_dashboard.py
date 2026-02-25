@@ -98,7 +98,9 @@ def compute_dri(row, w):
     )
  
 edited_df["DRI Score"] = edited_df.apply(lambda r: compute_dri(r, weights), axis=1)
-edited_df["Pilot Candidate"] = np.where(edited_df["DRI Score"] >= pilot_threshold, "Yes", "No")
+edited_df["Pilot Candidate"] = np.where(
+    edited_df["DRI Score"] >= pilot_threshold, "Yes", "No"
+)
  
 sorted_df = edited_df.sort_values("DRI Score", ascending=False).reset_index(drop=True)
  
