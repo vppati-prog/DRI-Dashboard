@@ -44,7 +44,7 @@ def load_observed_scores():
     if os.path.exists("dri_observations.csv"):
         return pd.read_csv("dri_observations.csv")
     else:
-        # fallback if agent hasn’t run yet
+        # fallback until agent runs first time
         return pd.DataFrame(
             [
                 ["MDG-S Rollout", 4.5, 4.5, 4.0, 3.5, 3.5, 4.0],
@@ -61,6 +61,7 @@ def load_observed_scores():
         )
  
 def run_observability_agent():
+    # Read raw metrics for all 8 projects
     raw = pd.read_csv("raw_rollout_metrics.csv")
  
     def jitter(value, pct=0.15, min_val=None, max_val=None):
@@ -72,16 +73,19 @@ def run_observability_agent():
             new = min(max_val, new)
         return new
  
-    # simulate new observations
-    raw["avg_effort_deviation_pct"] = raw["avg_effort_deviation_pct"].apply(
-        lambda v: jitter(v, pct=0.2, min_val=0, max_val=60)
-    )
-    raw["avg_duration_deviation_pct"] = raw["avg_duration_deviation_pct"].apply(
-        lambda v: jitter(v, pct=0.2, min_val=0, max_val=60)
-    )
-    raw["data_readiness_pct"] = raw["data_readiness_pct"].apply(
-        lambda v: jitter(v, pct=0.05, min_val=70, max_val=99)
-    )
+    # Simulate new observations
+    if "avg_effort_deviation_pct" in raw.columns:
+        raw["avg_effort_deviation_pct"] = raw["avg_effort_deviation_pct"].apply(
+            lambda v: jitter(v, pct=0.2, min_val=0, max_val=60)
+        )
+    if "avg_duration_deviation_pct" in raw.columns:
+        raw["avg_duration_deviation_pct"] = raw["avg_duration_deviation_pct"].apply(
+            lambda v: jitter(v, pct=0.2, min_val=0, max_val=60)
+        )
+    if "data_readiness_pct" in raw.columns:
+        raw["data_readiness_pct"] = raw["data_readiness_pct"].apply(
+            lambda v: jitter(v, pct=0.05, min_val=70, max_val=99)
+        )
  
     def score_scope_repeatability(row):
         if row["rollouts_done"] >= 10:
