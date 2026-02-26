@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import os
+import random
  
 st.set_page_config(page_title="Deployment Rollout Index (DRI)", layout="wide")
  
@@ -60,7 +61,7 @@ def load_observed_scores():
             ],
         )
  
-def run_observability_agent():
+def run_observability_agent(run_id=0):
     # Read raw metrics for all 8 projects
     raw = pd.read_csv("raw_rollout_metrics.csv")
  
@@ -176,12 +177,42 @@ def run_observability_agent():
     out["Language / Business Intensity"] = raw.apply(score_language_intensity, axis=1)
     out["Governance & Data Readiness"] = raw.apply(score_governance_readiness, axis=1)
  
-    out.to_csv("dri_observations.csv", index=False)
+# --- Demo dynamism: jitter scores per run ---
+rng = random.Random(1000 + run_id)
+
+score_cols = [
+    "Scope Repeatability",
+    "Template Maturity",
+    "Variance Predictability",
+    "Dependency Complexity",
+    "Language / Business Intensity",
+    "Governance & Data Readiness",
+]
+
+for col in score_cols:
+    def jitter(x):
+        # 70% chance of change
+        if rng.random() < 0.7:
+            delta = rng.choice([-1.0, -0.5, 0.5, 1.0])
+            x = x + delta
+
+        # clamp between 1 and 5
+        x = max(1.0, min(5.0, x))
+
+        # round to nearest 0.5
+        return round(x * 2) / 2
+
+    out[col] = out[col].apply(jitter)
  
+out.to_csv("dri_observations.csv", index=False)
+
+if "agent_run_id" not in st.session_state:
+    st.session_state.agent_run_id = 0 
 
 st.markdown("### Observability Agent")
 if st.button("Simulate new rollout data (run agent)"):
-    run_observability_agent()
+    st.session_state.agent_run_id += 1
+    run_observability_agent(st.session_state.agent_run_id)
     load_observed_scores.clear()
     st.rerun()
 
