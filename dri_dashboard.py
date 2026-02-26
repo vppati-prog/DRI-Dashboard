@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import os
+import subprocess
  
 st.set_page_config(page_title="Deployment Rollout Index (DRI)", layout="wide")
  
@@ -38,31 +40,36 @@ st.sidebar.markdown("Projects with DRI ≥ threshold will be flagged as **Pilot 
 # 2. SAMPLE BASELINE DATA
 # -------------------------
 # Scores are on a 1–5 scale, 5 = high readiness
-data = [
-    # project, scope, template, variance, dependency, language, governance
-    ("MDG-S Rollout", 4.5, 4.5, 4.0, 3.5, 3.5, 4.0),
-    ("SLP Rollout",    4.0, 4.0, 3.5, 3.0, 3.5, 3.5),
-    ("eSHOP Buy",      3.5, 4.0, 3.5, 3.0, 3.0, 3.0),
-    ("CLM Rollout",    3.0, 3.5, 3.0, 2.5, 3.5, 3.0),
-    ("M2M",            3.0, 3.0, 2.5, 2.0, 3.0, 2.5),
-    ("NewCOM F&A",     2.5, 2.5, 2.5, 2.0, 3.0, 2.5),
-    ("3PL",            2.5, 2.5, 2.0, 2.0, 2.5, 2.5),
-    ("OmniCS",         2.5, 2.5, 2.0, 2.0, 2.5, 2.5),
-]
+@st.cache_data(ttl=60)
+def load_observed_scores():
+    if os.path.exists("dri_observations.csv"):
+        return pd.read_csv("dri_observations.csv")
+    else:
+        # fallback if agent hasn’t run yet
+        return pd.DataFrame(
+            [
+                ["MDG-S Rollout", 4.5, 4.5, 4.0, 3.5, 3.5, 4.0],
+            ],
+            columns=[
+                "Project",
+                "Scope Repeatability",
+                "Template Maturity",
+                "Variance Predictability",
+                "Dependency Complexity",
+                "Language / Business Intensity",
+                "Governance & Data Readiness",
+            ],
+        )
  
-df = pd.DataFrame(
-    data,
-    columns=[
-        "Project",
-        "Scope Repeatability",
-        "Template Maturity",
-        "Variance Predictability",
-        "Dependency Complexity",
-        "Language / Business Intensity",
-        "Governance & Data Readiness",
-    ],
-)
+def run_observability_agent():
+    subprocess.run(["python", "observability_agent.py"], check=False)
  
+df = load_observed_scores()
+st.markdown("### Observability Agent")
+if st.button("Simulate new rollout data (run agent)"):
+    run_observability_agent()
+    load_observed_scores.clear()
+    st.experimental_rerun() 
 # Allow user tweaks of baseline scores
 st.markdown("## Deployment Rollout Index – Baseline Projects")
 st.markdown(
