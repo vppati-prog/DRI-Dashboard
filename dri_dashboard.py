@@ -177,34 +177,34 @@ def run_observability_agent(run_id=0):
     out["Language / Business Intensity"] = raw.apply(score_language_intensity, axis=1)
     out["Governance & Data Readiness"] = raw.apply(score_governance_readiness, axis=1)
  
-# --- Demo dynamism: jitter scores per run ---
-rng = random.Random(1000 + run_id)
+ # --- Demo dynamism: jitter scores per run ---
+    rng = random.Random(1000 + run_id)
 
-score_cols = [
-    "Scope Repeatability",
-    "Template Maturity",
-    "Variance Predictability",
-    "Dependency Complexity",
-    "Language / Business Intensity",
-    "Governance & Data Readiness",
-]
+    score_cols = [
+        "Scope Repeatability",
+        "Template Maturity",
+        "Variance Predictability",
+        "Dependency Complexity",
+        "Language / Business Intensity",
+        "Governance & Data Readiness",
+    ]
 
-for col in score_cols:
-    def jitter(x):
-        # 70% chance of change
-        if rng.random() < 0.7:
-            delta = rng.choice([-1.0, -0.5, 0.5, 1.0])
-            x = x + delta
+    for col in score_cols:
+        def jitter_score(x):
+            # 70% chance of change
+            if rng.random() < 0.7:
+                delta = rng.choice([-1.0, -0.5, 0.5, 1.0])
+                x = x + delta
 
-        # clamp between 1 and 5
-        x = max(1.0, min(5.0, x))
+            # clamp between 1 and 5
+            x = max(1.0, min(5.0, x))
 
-        # round to nearest 0.5
-        return round(x * 2) / 2
+            # round to nearest 0.5
+            return round(x * 2) / 2
 
-    out[col] = out[col].apply(jitter)
- 
-out.to_csv("dri_observations.csv", index=False)
+        out[col] = out[col].apply(jitter_score)
+
+    out.to_csv("dri_observations.csv", index=False)
 
 if "agent_run_id" not in st.session_state:
     st.session_state.agent_run_id = 0 
