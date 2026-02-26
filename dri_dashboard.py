@@ -177,7 +177,7 @@ def run_observability_agent(run_id=0):
     out["Language / Business Intensity"] = raw.apply(score_language_intensity, axis=1)
     out["Governance & Data Readiness"] = raw.apply(score_governance_readiness, axis=1)
  
- # --- Demo dynamism: jitter scores per run ---
+# --- Demo dynamism: dramatic re-score per run ---
     rng = random.Random(1000 + run_id)
 
     score_cols = [
@@ -189,19 +189,17 @@ def run_observability_agent(run_id=0):
         "Governance & Data Readiness",
     ]
 
+    def dramatic_score(x):
+        # 90% chance: jump to a totally new score (demo drama)
+        if rng.random() < 1.0:
+            return rng.choice([1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0])
+        # 10% chance: keep same
+        return x
+
     for col in score_cols:
-        def jitter_score(x):
-            # 90% chance of dramatic jump
-            if rng.random() < 0.9:
-                 return rng.choice([1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0])
-            # 10% chance no change
-            return x
+        out[col] = out[col].apply(dramatic_score)
 
-
-        out[col] = out[col].apply(jitter_score)
-
-    
- out.to_csv("dri_observations.csv", index=False)
+    out.to_csv("dri_observations.csv", index=False)
 
 if "agent_run_id" not in st.session_state:
     st.session_state.agent_run_id = 0 
