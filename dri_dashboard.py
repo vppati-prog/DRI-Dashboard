@@ -191,20 +191,17 @@ def run_observability_agent(run_id=0):
 
     for col in score_cols:
         def jitter_score(x):
-            # 70% chance of change
-            if rng.random() < 0.7:
-                delta = rng.choice([-1.5, -1.0, -0.5, 0.5, 1.0, 1.5])
-                x = x + delta
+            # 90% chance of dramatic jump
+            if rng.random() < 0.9:
+                 return rng.choice([1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0])
+            # 10% chance no change
+            return x
 
-            # clamp between 1 and 5
-            x = max(1.0, min(5.0, x))
-
-            # round to nearest 0.5
-            return round(x * 2) / 2
 
         out[col] = out[col].apply(jitter_score)
 
-    out.to_csv("dri_observations.csv", index=False)
+    
+ out.to_csv("dri_observations.csv", index=False)
 
 if "agent_run_id" not in st.session_state:
     st.session_state.agent_run_id = 0 
