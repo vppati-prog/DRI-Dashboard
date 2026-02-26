@@ -178,12 +178,16 @@ def run_observability_agent():
  
     out.to_csv("dri_observations.csv", index=False)
  
-df = load_observed_scores()
+
 st.markdown("### Observability Agent")
 if st.button("Simulate new rollout data (run agent)"):
     run_observability_agent()
     load_observed_scores.clear()
-    st.experimental_rerun() 
+    st.rerun()
+
+df = load_observed_scores()
+df.index = df.index + 1
+ 
 # Allow user tweaks of baseline scores
 st.markdown("## Deployment Rollout Index – Baseline Projects")
 st.markdown(
