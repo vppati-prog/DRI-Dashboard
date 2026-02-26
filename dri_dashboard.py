@@ -193,7 +193,7 @@ def run_observability_agent(run_id=0):
         def jitter_score(x):
             # 70% chance of change
             if rng.random() < 0.7:
-                delta = rng.choice([-1.0, -0.5, 0.5, 1.0])
+                delta = rng.choice([-1.5, -1.0, -0.5, 0.5, 1.0, 1.5])
                 x = x + delta
 
             # clamp between 1 and 5
