@@ -1,0 +1,9 @@
+project_id,rollouts_done,template_changes_last3,avg_effort_deviation_pct,avg_duration_deviation_pct,integrations_count,dependency_incidents_last3,business_workshops,localisation_changes,data_readiness_pct,failed_quality_gates_last3
+MDG-S Rollout,12,0,5,8,2,0,2,0,97,0
+SLP Rollout,8,1,10,12,3,1,3,1,94,1
+eSHOP Buy,5,2,15,18,3,2,4,1,90,1
+CLM Rollout,4,3,22,25,4,3,5,2,87,2
+M2M,3,4,30,35,5,4,6,3,82,3
+NewCOM F&A,2,4,32,38,5,4,6,3,80,3
+3PL,2,5,40,45,6,5,7,3,78,4
+OmniCS,1,5,45,50,6,5,7,4,75,4
