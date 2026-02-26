@@ -283,11 +283,11 @@ with col2:
 st.markdown("---")
 st.markdown(
     """
-### How to use in a bid defense
+### How to use the DRI Tool
  
-1. **Start with baseline** scores from historic T&M rollouts.  
-2. **Show weight sliders** to reflect what matters most for the client (template maturity vs. dependency risk, etc.).  
-3. **Adjust scores live** based on new information about specific projects.  
+1. **Seamlessly allow the Observability agent to collect the baseline** scores from the T&M Rollout Stage. Thereafter, the Observability agent will populate the DRI engine.
+2. **The weight sliders** reflect what may matter most for Richemont (template maturity vs. dependency risk, etc.).  
+3. **Scores get updated dynamically** based on new information about specific project rollouts.  
 4. The **DRI ranking and pilot flags update instantly**, demonstrating an evidence‑based, objective route to Fixed Price pilots.
 """
 )
